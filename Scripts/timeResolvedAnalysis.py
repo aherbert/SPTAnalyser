@@ -804,10 +804,10 @@ def fourset_output(save_dir, outputfile, dataset, coverslip_data, use_timestamps
             name = 'number_of_segments'
         data = []
         if binned:
-            os.mkdir(save_dir + '\\TRplots\\' + name)
-            os.mkdir(save_dir + '\\TRplots\\' + name + '\\pngs')
-            os.mkdir(save_dir + '\\TRplots\\' + name + '\\svgs')
-            os.mkdir(save_dir + '\\TRplots\\' + name + '\\pdfs')
+            os.mkdir(os.path.join(save_dir, 'TRplots', name))
+            os.mkdir(os.path.join(save_dir, 'TRplots', name, 'pngs'))
+            os.mkdir(os.path.join(save_dir, 'TRplots', name, 'svgs'))
+            os.mkdir(os.path.join(save_dir, 'TRplots', name, 'pdfs'))
         # writes output by signal type
         for signal_type in ['global', 'immobile', 'confined', 'free']:
             if binned:
@@ -821,9 +821,9 @@ def fourset_output(save_dir, outputfile, dataset, coverslip_data, use_timestamps
                     plot = plot_by_cells(coverslip_data, folder + '_' + signal_type, t_lig, ligand_name, dataset,
                                          error_type,
                                          plotcolor)
-                plot.savefig(save_dir + '\\TRplots\\' + name + '\\pngs\\' + signal_type + '.png', dpi=300)
-                plot.savefig(save_dir + '\\TRplots\\' + name + '\\svgs\\' + signal_type + '.svg', dpi=300)
-                plot.savefig(save_dir + '\\TRplots\\' + name + '\\pdfs\\' + signal_type + '.pdf', dpi=300)
+                plot.savefig(os.path.join(save_dir, 'TRplots', name, 'pngs', signal_type + '.png'), dpi=300)
+                plot.savefig(os.path.join(save_dir, 'TRplots', name, 'svgs', signal_type + '.svg'), dpi=300)
+                plot.savefig(os.path.join(save_dir, 'TRplots', name, 'pdfs', signal_type + '.pdf'), dpi=300)
 
             else:
                 data.append(compile_columns(dataset, ["Cell Name", "Time", folder + "_" + signal_type,
@@ -1049,10 +1049,10 @@ def main(config_path):
 
     name = 'fractions'
     os.mkdir(save_dir + '\\TRplots')
-    os.mkdir(save_dir + '\\TRplots\\' + name)
-    os.mkdir(save_dir + '\\TRplots\\' + name + '\\pngs')
-    os.mkdir(save_dir + '\\TRplots\\' + name + '\\svgs')
-    os.mkdir(save_dir + '\\TRplots\\' + name + '\\pdfs')
+    os.mkdir(os.path.join(save_dir, 'TRplots', name))
+    os.mkdir(os.path.join(save_dir, 'TRplots', name, 'pngs'))
+    os.mkdir(os.path.join(save_dir, 'TRplots', name, 'svgs'))
+    os.mkdir(os.path.join(save_dir, 'TRplots', name, 'pdfs'))
     for signal_type in ['immobile', 'confined', 'free']:
         if use_timestamps:
             plot = plot_by_time(coverslip_data, 'P_' + signal_type, t_lig, ligand_name, binned_data, error_type,
@@ -1060,9 +1060,9 @@ def main(config_path):
         else:
             plot = plot_by_cells(coverslip_data, 'P_' + signal_type, t_lig, ligand_name, binned_data, error_type,
                                  plotcolor)
-        plot.savefig(save_dir + '\\TRplots\\' + name + '\\pngs\\' + signal_type + '.png', dpi=300)
-        plot.savefig(save_dir + '\\TRplots\\' + name + '\\svgs\\' + signal_type + '.svg', dpi=300)
-        plot.savefig(save_dir + '\\TRplots\\' + name + '\\pdfs\\' + signal_type + '.pdf', dpi=300)
+        plot.savefig(os.path.join(save_dir, 'TRplots', name, 'pngs', signal_type + '.png'), dpi=300)
+        plot.savefig(os.path.join(save_dir, 'TRplots', name, 'svgs', signal_type + '.svg'), dpi=300)
+        plot.savefig(os.path.join(save_dir, 'TRplots', name, 'pdfs', signal_type + '.pdf'), dpi=300)
 
     output_folder(outputFile_raw, 'confinement_radii',
                   [['confinement_radii',
@@ -1075,16 +1075,16 @@ def main(config_path):
                     compile_columns(stacked_data, ["Cell Name", "Time", 'confinement_radius'], False)]])
 
     name = 'confinement_radii'
-    os.mkdir(save_dir + '\\TRplots\\' + name)
+    os.mkdir(os.path.join(save_dir, 'TRplots', name))
     if use_timestamps:
         plot = plot_by_time(coverslip_data, 'confinement_radius', t_lig, ligand_name, binned_data, error_type,
                             plotcolor)
     else:
         plot = plot_by_cells(coverslip_data, 'confinement_radius', t_lig, ligand_name, binned_data, error_type,
                              plotcolor)
-    plot.savefig(save_dir + '\\TRplots\\' + name + '\\confinement_radii.png', dpi=300)
-    plot.savefig(save_dir + '\\TRplots\\' + name + '\\confinement_radii.svg', dpi=300)
-    plot.savefig(save_dir + '\\TRplots\\' + name + '\\confinement_radii.pdf', dpi=300)
+    plot.savefig(os.path.join(save_dir, 'TRplots', name, 'confinement_radii.png'), dpi=300)
+    plot.savefig(os.path.join(save_dir, 'TRplots', name, 'confinement_radii.svg'), dpi=300)
+    plot.savefig(os.path.join(save_dir, 'TRplots', name, 'confinement_radii.pdf'), dpi=300)
 
     # writes the output files for diff coef, seg lengths, and number of segments
     # raw
@@ -1167,10 +1167,10 @@ def main(config_path):
             except FileExistsError:
                 pass
             normFrames[key].to_csv(
-                save_dir + '\\tests\\normality\\' + name + '\\test_normality_' + name + "_" + key2.split('_')[
-                    -1] + '.csv', index=False)
+              os.path.join(save_dir, 'tests', 'normality', name, 'test_normality_' + name + "_" + key2.split('_')[
+                    -1] + '.csv'), index=False)
         if ligand:
-            os.mkdir(save_dir + '\\tests\\significance')
+            os.mkdir(os.path.join(save_dir, 'tests', 'significance'))
             for key in signFrames.keys():
                 key2 = key
                 if key.split('_')[0] == 'P':
@@ -1187,17 +1187,17 @@ def main(config_path):
                 else:
                     continue
                 try:
-                    os.mkdir(save_dir + '\\tests\\significance\\' + name)
+                    os.mkdir(os.path.join(save_dir, 'tests', 'significance', name))
                 except FileExistsError:
                     pass
                 if key == key2:
                     signFrames[key].to_csv((
-                                                       save_dir + '\\tests\\significance\\' + name + '\\test_significance_' + name + "_" +
-                                                       key2.split('_')[
-                                                           -1] + '.csv'), index=False)
+                            os.path.join(save_dir, 'tests', 'significance', name, 'test_significance_' + name + "_" +
+                            key2.split('_')[
+                                -1] + '.csv')), index=False)
                 else:
                     signFrames[key].to_csv((
-                            save_dir + '\\tests\\significance\\' + name + '\\test_significance_' + name + '.csv'), index=False)
+                            os.path.join(save_dir, 'tests', 'significance', name, 'test_significance_' + name + '.csv')), index=False)
 
     print("--- %s seconds ---" % (time.time() - start_time))
 
