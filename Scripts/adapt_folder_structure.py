@@ -26,13 +26,13 @@ class IncorrectConfigException(Exception):
 def create_folders(directory):
     main_folder_name = os.path.basename(directory)
     try:
-        os.mkdir(directory + "\\cells")
-        os.mkdir(directory + "\\background")
-        os.mkdir(directory + "\\cells\\tracks")
-        os.mkdir(directory + "\\cells\\rois")
-        os.mkdir(directory + "\\cells\\tifs")
-        os.mkdir(directory + "\\background\\tracks")
-        os.mkdir(directory + "\\background\\tifs")
+        os.mkdir(os.path.join(directory, "cells"))
+        os.mkdir(os.path.join(directory, "background"))
+        os.mkdir(os.path.join(directory, "cells", "tracks"))
+        os.mkdir(os.path.join(directory, "cells", "rois"))
+        os.mkdir(os.path.join(directory, "cells", "tifs"))
+        os.mkdir(os.path.join(directory, "background", "tracks"))
+        os.mkdir(os.path.join(directory, "background", "tifs"))
     except FileExistsError:
         print("These folders already exist. If you want to create them again, you have to delete the 'cells' and"
               " 'background' folders in", directory)
@@ -81,25 +81,25 @@ def rename_files(folder, remove_str="_MMStack.ome.tif"):
         if 'cell' in f.lower():
             pos = f.lower().find('cell')  #finds the position of the respective keyword
             name = f[:pos] + 'cell' + f[pos+4:] #compiles new file name, cutting the keyword out and replacing it with the lowercase one
-            os.rename(folder + "\\" + f, folder + "\\" + name) #renaming
+            os.rename(os.path.join(folder, f), os.path.join(folder, name)) #renaming
             f = name
         if 'background' in f.lower():
             pos = f.lower().find('background')
             name = f[:pos] + 'background' + f[pos + 10:]
-            os.rename(folder + "\\" + f, folder + "\\" + name)
+            os.rename(os.path.join(folder, f), os.path.join(folder, name))
             f = name
         if '_dl' in f.lower():
             pos = f.lower().find('_dl')
             name = f[:pos] + '_dl' + f[pos + 3:]
-            os.rename(folder + "\\" + f, folder + "\\" + name)
+            os.rename(os.path.join(folder, f), os.path.join(folder, name))
             f = name
         if '_tl' in f.lower():
             pos = f.lower().find('_tl')
             name = f[:pos] + '_tl' + f[pos + 3:]
-            os.rename(folder + "\\" + f, folder + "\\" + name)
+            os.rename(os.path.join(folder, f), os.path.join(folder, name))
             f = name
         if remove_str in f:
-            os.rename(folder + "\\" + f, folder + "\\" + f[:-len(remove_str)] + ".tif")
+            os.rename(os.path.join(folder, f), os.path.join(folder, f[:-len(remove_str)] + ".tif"))
 
 
 def remove_empty_folders(dir):
@@ -108,8 +108,8 @@ def remove_empty_folders(dir):
     :param dir: Directory
     """
     for f in os.listdir(dir):
-        if os.path.isdir(dir + "\\" + f):
-            contents = list(os.listdir(dir + "\\" + f))
+        if os.path.isdir(os.path.join(dir, f)):
+            contents = list(os.listdir(os.path.join(dir, f)))
             try:    #attempts to delete comments.txt from list of contents
                 contents.remove("comments.txt")
             except ValueError:
@@ -119,7 +119,7 @@ def remove_empty_folders(dir):
             except ValueError:
                 pass
             if len(contents) == 0:
-                shutil.rmtree(dir + "\\" + f) #removes directory if list of contents is empty after attempted removal above
+                shutil.rmtree(os.path.join(dir, f)) #removes directory if list of contents is empty after attempted removal above
 
 
 def main(config_path):
@@ -151,14 +151,14 @@ def main(config_path):
         files_background_tif = get_matching_files(measurement_directory, target="background", ending=".tif", dl=False)
         files_background_txt = get_matching_files(measurement_directory, target="background", ending=".txt", dl=False)
         # move files to fitting subfolder
-        sort_files_target_folder(files_cell_tif, measurement_directory + "\\cells\\tifs")
-        sort_files_target_folder(files_cell_txt, measurement_directory + "\\cells\\tifs")
-        sort_files_target_folder(files_cell_dl, measurement_directory + "\\cells\\tifs")
-        sort_files_target_folder(files_background_tif, measurement_directory + "\\background\\tifs")
-        sort_files_target_folder(files_background_txt, measurement_directory + "\\background\\tifs")
+        sort_files_target_folder(files_cell_tif, os.path.join(measurement_directory, "cells", "tifs"))
+        sort_files_target_folder(files_cell_txt, os.path.join(measurement_directory, "cells", "tifs"))
+        sort_files_target_folder(files_cell_dl, os.path.join(measurement_directory, "cells", "tifs"))
+        sort_files_target_folder(files_background_tif, os.path.join(measurement_directory, "background", "tifs"))
+        sort_files_target_folder(files_background_txt, os.path.join(measurement_directory, "background", "tifs"))
         # rename tif files (cell_MMStack.ome.tif -> cell.tif)
-        rename_files(measurement_directory + "\\cells\\tifs", remove_str)
-        rename_files(measurement_directory + "\\background\\tifs", remove_str)
+        rename_files(os.path.join(measurement_directory, "cells", "tifs"), remove_str)
+        rename_files(os.path.join(measurement_directory, "background", "tifs"), remove_str)
         # delete empty folders
         remove_empty_folders(measurement_directory)
         print("Folder structures successfully adapted.")
@@ -170,4 +170,3 @@ if __name__ == "__main__":
         main(cfg_path)
     except IndexError:
         print("Usage: python adapt_folder_structure.py your_config_file.ini")
-
