@@ -27,7 +27,7 @@ def get_files(dir_path, mask_names):
     file_names = []
     for file in os.listdir(dir_path):
         if file.endswith(".h5") and file not in mask_names:
-            files.append(dir_path + "\\" + file)
+            files.append(os.path.join(dir_path, file))
             file_names.append(file)
     return files, file_names
 
@@ -80,7 +80,7 @@ def get_values_single(files, folder, frame, idx):
 
 
 def save_mean_results(path, file_name, target_names, mean, STD, SEM):
-    out_file_name = path+"\\"+file_name+"_mean.csv"
+    out_file_name = os.path.join(path, file_name+"_mean.csv")
     header = "target name\tmean\tstandard deviation\tstandard error"
     max_name_length = max([len(i) for i in target_names])
     data = np.zeros(np.array(target_names).size, dtype=[("col1", "U" + str(max_name_length)),
@@ -93,7 +93,7 @@ def save_mean_results(path, file_name, target_names, mean, STD, SEM):
 
 
 def save_all_results(path, file_name, target_names, values):
-    out_file_name = path+"\\"+file_name+"_values.csv"
+    out_file_name = os.path.join(path, file_name+"_values.csv")
     header = ",".join(target_names)+"\n"
     with open(out_file_name, "w+", newline="") as f:
         writer = csv.writer(f)
@@ -103,7 +103,7 @@ def save_all_results(path, file_name, target_names, values):
 
 
 def save_single_results(path, file_name, target_names, mean, STD, SEM):
-    out_file_name = path+"\\"+file_name+"_single_values.csv"
+    out_file_name = os.path.join(path, file_name+"_single_values.csv")
     header = "target names, values\n"
     with open(out_file_name, "w+", newline="") as f:
         f.write(header)
