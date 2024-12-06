@@ -176,17 +176,17 @@ def main(config_path):
     except FileExistsError:
         raise IncorrectConfigException("Saving directory already exists, aborting... Please state a new directory.")
     try:
-        os.mkdir(save_dir + "\\trackAnalysis")
+        os.mkdir(os.path.join(save_dir, "trackAnalysis"))
         if len(background) != 0:
-            os.mkdir(save_dir + "\\trackAnalysis\\backgrounds")
-        os.mkdir(save_dir + "\\trackAnalysis\\cells")
+            os.mkdir(os.path.join(save_dir, "trackAnalysis", "backgrounds"))
+        os.mkdir(os.path.join(save_dir, "trackAnalysis", "cells"))
     except FileExistsError:
-        print("directory " + save_dir + "\\trackAnalysis exists. Will be overwritten")
-        shutil.rmtree(save_dir + "\\trackAnalysis")
-        os.mkdir(save_dir + "\\trackAnalysis")
+        print("directory " + save_dir + os.path.sep + "trackAnalysis exists. Will be overwritten")
+        shutil.rmtree(os.path.join(save_dir, "trackAnalysis"))
+        os.mkdir(os.path.join(save_dir, "trackAnalysis"))
         if len(background) != 0:
-            os.mkdir(save_dir + "\\trackAnalysis\\backgrounds")
-        os.mkdir(save_dir + "\\trackAnalysis\\cells")
+            os.mkdir(os.path.join(save_dir, "trackAnalysis", "backgrounds"))
+        os.mkdir(os.path.join(save_dir, "trackAnalysis", "cells"))
 
     # runs analysis for each given directory
 
@@ -214,10 +214,10 @@ def main(config_path):
             notebook_analysis.save_analysis()
             for file in get_matching_files(dir, ".h5", "background"):
                 try:
-                    shutil.move(file, save_dir + "\\trackAnalysis\\cells")
+                    shutil.move(file, os.path.join(save_dir, "trackAnalysis", "cells"))
                 except shutil.Error:
                     print(
-                        "File " + file + " already exists in the trackAnalysis\\cells directory. Please check for duplicate files. Skipping...")
+                        "File " + file + " already exists in the trackAnalysis" + os.path.sep + "cells directory. Please check for duplicate files. Skipping...")
     # runs analysis for given backgrounds
     for bg in background:
         with warnings.catch_warnings():
@@ -233,20 +233,20 @@ def main(config_path):
             notebook_analysis.save_analysis()
             for file in get_matching_files(bg, ".h5", "cell"):
                 try:
-                    shutil.move(file, save_dir + "\\trackAnalysis\\backgrounds")
+                    shutil.move(file, os.path.join(save_dir, "trackAnalysis", "backgrounds"))
                 except shutil.Error:
                     print(
-                        "File " + file + " already exists in the trackAnalysis\\background directory. Please check for duplicate files. Skipping...")
+                        "File " + file + " already exists in the trackAnalysis" + os.path.sep + "background directory. Please check for duplicate files. Skipping...")
                     pass
     # creates the statistics notebook depending on whether backgrounds are given or not
     if len(background) == 0:
-        notebook_statistics = sigma_dyn.statisticsNotebook(save_dir + "\\trackAnalysis\\cells", "",
+        notebook_statistics = sigma_dyn.statisticsNotebook(os.path.join(save_dir, "trackAnalysis", "cells"), "",
                                                            filter_min_length, filter_max_length, filter_min_D,
                                                            filter_max_D, filter_immobile,
                                                            filter_confined, filter_free, filter_noType)
     else:
-        notebook_statistics = sigma_dyn.statisticsNotebook(save_dir + "\\trackAnalysis\\cells",
-                                                           save_dir + "\\trackAnalysis\\backgrounds",
+        notebook_statistics = sigma_dyn.statisticsNotebook(os.path.join(save_dir + "trackAnalysis", "cells"),
+                                                           os.path.join(save_dir + "trackAnalysis", "backgrounds"),
                                                            filter_min_length, filter_max_length, filter_min_D,
                                                            filter_max_D, filter_immobile,
                                                            filter_confined, filter_free, filter_noType)
@@ -260,10 +260,10 @@ def main(config_path):
     d_min = sigma_dyn_value ** 2 / (float(dof) * float(camera_integration_time) * 4)
     print("D_min = " + str(d_min))
     # output as file
-    sigma_dyn_frame.to_csv(save_dir + "\\sigma_dyn_per_cell.csv", index=False)
+    sigma_dyn_frame.to_csv(os.path.join(save_dir, "sigma_dyn_per_cell.csv"), index=False)
     out = pd.Series([sigma_dyn_value, d_min], ["Sigma Dyn [um]", "D_min [um^2s^-1]"])
-    out.to_csv(save_dir + "\\D_min.csv", header=False)
-    shutil.rmtree(save_dir + "\\trackAnalysis")
+    out.to_csv(os.path.join(save_dir, "D_min.csv"), header=False)
+    shutil.rmtree(os.path.join(save_dir, "trackAnalysis"))
     delete_empty_directories(directories)
     print("--- %s seconds ---" % (time.time() - start_time))
 
