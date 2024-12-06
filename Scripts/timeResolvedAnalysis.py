@@ -880,11 +880,11 @@ def main(config_path):
 
     tiffiles = []
     for dir in csPaths:
-        tiffiles += get_matching_files(dir + "\\cells\\tifs", "cell", ["_dl", 'metadata'])
+        tiffiles += get_matching_files(os.path.join(dir, "cells", "tifs"), "cell", ["_dl", 'metadata'])
 
     csNames = []
     for cs in csPaths:
-        csNames.append('_'.join(os.listdir(cs + "\\cells\\tifs")[0].split("\\")[-1].split('_')[:-2]))
+        csNames.append('_'.join(os.listdir(os.path.join(cs, "cells", "tifs"))[0].split("\\")[-1].split('_')[:-2]))
 
     try:
         if len([key for key in config["GLOBAL_DIR"]]):
@@ -967,19 +967,19 @@ def main(config_path):
     except FileExistsError:
         pass
     try:
-        os.mkdir(save_dir + '\\timeResolvedAnalysis')
+        os.mkdir(os.path.join(save_dir, 'timeResolvedAnalysis'))
     except FileExistsError:
-        shutil.rmtree(save_dir + '\\timeResolvedAnalysis')
-        os.mkdir(save_dir + '\\timeResolvedAnalysis')
-    save_dir += '\\timeResolvedAnalysis'
+        shutil.rmtree(os.path.join(save_dir, 'timeResolvedAnalysis'))
+        os.mkdir(os.path.join(save_dir, 'timeResolvedAnalysis'))
+    save_dir = os.path.join(save_dir, 'timeResolvedAnalysis')
 
     # writes the .tif files into a dictionary with the key being their coverslip name
     input_files = {c: [] for c in csNames}
     for h5 in files:
-        filename = h5.split("\\")[-1][:-2]
+        filename = h5.split(os.path.sep)[-1][:-2]
         tif = parent_string(filename, tiffiles,
                             "metadata")  # goes through the tif files and looks for the one with the right name
-        coverslipname = '_'.join(tif.split("\\")[-1].split('_')[:-2])
+        coverslipname = '_'.join(tif.split(os.path.sep)[-1].split('_')[:-2])
         input_files[coverslipname].append(filename)
     # sorts the files in correct order, taking multi digit numbers into account e.g. 10 comes after 2
     sorted = []
@@ -1021,7 +1021,7 @@ def main(config_path):
     global_mean.rename(columns={'Cell Names': 'cell range'})
 
     # output
-    outputFile = h5py.File(save_dir + '\\stats.h5', 'w')
+    outputFile = h5py.File(os.path.join(save_dir, 'stats.h5'), 'w')
     outputFile_bin = outputFile.create_group('bin')
     outputFile_raw = outputFile.create_group('raw')
     outputFile_stacked = outputFile.create_group('stacked')
@@ -1048,7 +1048,7 @@ def main(config_path):
                    ['free', compile_columns(stacked_data, ["Cell Name", "Time", "P_free"], False)]])
 
     name = 'fractions'
-    os.mkdir(save_dir + '\\TRplots')
+    os.mkdir(os.path.join(save_dir, 'TRplots'))
     os.mkdir(os.path.join(save_dir, 'TRplots', name))
     os.mkdir(os.path.join(save_dir, 'TRplots', name, 'pngs'))
     os.mkdir(os.path.join(save_dir, 'TRplots', name, 'svgs'))
@@ -1135,8 +1135,8 @@ def main(config_path):
     if use_timestamps:
         run_stats = False
     if run_stats:
-        os.mkdir(save_dir + '\\tests')
-        os.mkdir(save_dir + '\\tests\\normality')
+        os.mkdir(os.path.join(save_dir, 'tests'))
+        os.mkdir(os.path.join(save_dir, 'tests', 'normality'))
         if use_timestamps:
             if ligand:
                 normFrames, signFrames = test_by_time(coverslip_data, bin_size_time, ligand, alpha, p1, p2, p3)
@@ -1163,7 +1163,7 @@ def main(config_path):
             else:
                 continue
             try:
-                os.mkdir(save_dir + '\\tests\\normality\\' + name)
+                os.mkdir(os.path.join(save_dir, 'tests', 'normality', name))
             except FileExistsError:
                 pass
             normFrames[key].to_csv(
