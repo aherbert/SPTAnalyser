@@ -98,7 +98,9 @@ def get_files(dir, dir_extension, file_ending, ignore_str):
 
 
 def convert_to_fiji_path(path):
-    return path.replace("\\", "\\\\")
+  if os.path.sep == "\\":
+      return path.replace("\\", "\\\\")
+  return path
 
 
 def main(config_path):

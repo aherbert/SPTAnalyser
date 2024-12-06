@@ -884,7 +884,7 @@ def main(config_path):
 
     csNames = []
     for cs in csPaths:
-        csNames.append('_'.join(os.listdir(os.path.join(cs, "cells", "tifs"))[0].split(os.path.sep)[-1].split('_')[:-2]))
+        csNames.append('_'.join(os.path.basename(os.listdir(os.path.join(cs, "cells", "tifs"))[0]).split('_')[:-2]))
 
     try:
         if len([key for key in config["GLOBAL_DIR"]]):
@@ -976,10 +976,10 @@ def main(config_path):
     # writes the .tif files into a dictionary with the key being their coverslip name
     input_files = {c: [] for c in csNames}
     for h5 in files:
-        filename = h5.split(os.path.sep)[-1][:-2]
+        filename = os.path.basename(h5)[:-2]
         tif = parent_string(filename, tiffiles,
                             "metadata")  # goes through the tif files and looks for the one with the right name
-        coverslipname = '_'.join(tif.split(os.path.sep)[-1].split('_')[:-2])
+        coverslipname = '_'.join(os.path.basename(tif).split('_')[:-2])
         input_files[coverslipname].append(filename)
     # sorts the files in correct order, taking multi digit numbers into account e.g. 10 comes after 2
     sorted = []
