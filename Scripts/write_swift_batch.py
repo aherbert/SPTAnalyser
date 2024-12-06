@@ -23,7 +23,7 @@ def get_loc_files(dir_path):
     files = []
     for file in os.listdir(dir_path):
         if file.endswith(".csv") and "tracked" not in file:
-            files.append(dir_path + "\\" + file)
+            files.append(os.path.join(dir_path, file))
     return files
 
 
