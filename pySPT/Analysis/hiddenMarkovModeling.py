@@ -84,7 +84,7 @@ class InitHMM():
         names, jump_dfs = [], []
         for file in os.listdir(self.dir_path):
             if file.endswith("csv") and "tracked" in file:
-                file_path = self.dir_path + "\\" + file
+                file_path = os.path.join(self.dir_path, file)
                 data_df = pd.read_csv(filepath_or_buffer=file_path)
                 jump_dfs.append(em.preprocess_swift_data(data_df))
                 names.append(file)
@@ -256,7 +256,7 @@ class HMM():
         names, jump_dfs = [], []
         for file in os.listdir(self.dir_path):
             if file.endswith("csv") and "tracked" in file:
-                file_path = self.dir_path + "\\" + file
+                file_path = os.path.join(self.dir_path, file)
                 data_df = pd.read_csv(filepath_or_buffer=file_path)
                 data_df = data_df[data_df["track.lifetime"]+1 >= self.min_len]
                 jump_dfs.append(em.preprocess_swift_data(data_df, min_track_length=self.min_len-1))
@@ -602,7 +602,7 @@ class HMM():
                                                    25) if colored_edges else "black"),
                      fontsize=edge_fontsize, style="filled",
                      penwidth=(str(self.tp_px_mapping(tp, row, column)) if var_width else "1"))
-        dot.render(save_dir + r"\\State_transition_diagram", view=True)
+        dot.render(os.path.join(save_dir, "State_transition_diagram"), view=True)
 
     def D_to_MSD(self, diff):
         return 4*diff*self.dt
