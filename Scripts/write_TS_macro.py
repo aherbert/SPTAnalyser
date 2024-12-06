@@ -170,12 +170,12 @@ def main(config_path):
             ignore_strs_tl = ["_dl", "_tl"]
             ignore_strs_size = ["_size"]
             
-        tif_files, tif_names = get_files(dir, r"\\cells\\tifs\\", ".tif", ignore_strs_tl)  # tif files with "_dl" will be ignored
-        roi_files, _ = get_files(dir, r"\\cells\\rois\\", ".roi", ignore_strs_size)
-        save_files = [dir + r"\\cells\\tracks\\" + os.path.splitext(i)[0] + ".csv" for i in tif_names]
+        tif_files, tif_names = get_files(dir, os.path.sep + "cells" + os.path.sep + "tifs" + os.path.sep, ".tif", ignore_strs_tl)  # tif files with "_dl" will be ignored
+        roi_files, _ = get_files(dir, os.path.sep + "cells" + os.path.sep + "rois" + os.path.sep, ".roi", ignore_strs_size)
+        save_files = [os.path.join(dir, "cells", "tracks", os.path.splitext(i)[0] + ".csv") for i in tif_names]
         if process_background:
-            background_files, background_names = get_files(dir, r"\\background\\tifs\\", ".tif", ignore_strs_tl)
-            save_background = [dir + r"\\background\\tracks\\" + os.path.splitext(i)[0] + ".csv" for i in background_names]    
+            background_files, background_names = get_files(dir, os.path.sep + "background" + os.path.sep + "tifs" + os.path.sep, ".tif", ignore_strs_tl)
+            save_background = [os.path.join(dir, "background", "tracks", + os.path.splitext(i)[0] + ".csv") for i in background_names]   
         all_tifs.extend(tif_files)
         if process_background:
             all_tifs.extend(background_files)
@@ -190,8 +190,8 @@ def main(config_path):
             all_save_files.extend(save_background)
 
     final_macro_name = "TS-macro_" + macro_name + "_" + datetime.today().strftime('%Y-%m-%d_%Hh-%Mm') + ".ijm"
-    write_macro(macro_directory + "\\" + final_macro_name, all_tifs, all_tif_names, all_rois, all_save_files, intensity_range, camera_setup_params, batch_mode, multi_emitter_fit)
-    print("Macro saved successfully at ", macro_directory + "\\" + final_macro_name)
+    write_macro(os.path.join(macro_directory, final_macro_name), all_tifs, all_tif_names, all_rois, all_save_files, intensity_range, camera_setup_params, batch_mode, multi_emitter_fit)
+    print("Macro saved successfully at ", os.path.join(macro_directory, final_macro_name))
 
 
 if __name__ == "__main__":
