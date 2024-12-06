@@ -6,6 +6,7 @@ Institute for Physical and Theoretical Chemistry, Goethe University Frankfurt a.
 Visualize the HMM analysis results.
 """
 
+import os
 import numpy as np
 import math
 import matplotlib.pyplot as plt
@@ -92,12 +93,12 @@ class HmmVisualization():
         
     def run_save_plots(self):
         try:
-            os.mkdir(self.save_dir + "\\" + self.save_folder_name)
+            os.mkdir(os.path.join(self.save_dir, self.save_folder_name))
         except OSError:
             print("Folder already exists.")
         else:
             for figure, name in zip(self.figures, self.figure_names):
-                figure.savefig(self.save_dir + "\\" + self.save_folder_name + "\\" + name + ".pdf", format="pdf", transparent=True)
+                figure.savefig(os.path.join(self.save_dir, self.save_folder_name, name + ".pdf"), format="pdf", transparent=True)
             self.state_transition_diagram()
         
     def get_number_of_states(self):
@@ -444,9 +445,9 @@ class HmmVisualization():
                          fontsize=edge_fontsize, style="filled", penwidth=(str(self.tp_px_mapping(tp, row, column)) if var_width else "1"))
 
         if not self.save_plots:
-            dot.render(self.tmp_path + "/State_transition_diagram.svg", view=True)
+            dot.render(os.path.join(self.tmp_path, "State_transition_diagram.svg"), view=True)
         else:
-            dot.render(self.save_dir + "\\" + self.save_folder_name + "\\" + "State_transition_diagram.svg", view=False)
+            dot.render(os.path.join(self.save_dir, self.save_folder_name, "State_transition_diagram.svg"), view=False)
             dot.format = "svg"
         
     def tp_percentage_rounded(self, tp):

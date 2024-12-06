@@ -6,6 +6,7 @@ Institute for Physical and Theoretical Chemistry, Goethe University Frankfurt a.
 Create microscope.txt file for ermine analysis with camera integration time, pixel size and localization error.
 """
 
+import os
 
 class Microscope():
     def __init__(self, dt, pixel_size, error, save_dir, ym_to_nm=True):
@@ -26,5 +27,5 @@ class Microscope():
             file.write("%.6e \n" %(float(self.error)))
 
     def save_hmm_microscope(self):
-        out_file_name = self.save_dir + "\\" + "microscope.txt"
+        out_file_name = os.path.join(self.save_dir, "microscope.txt")
         self.write_microscope_file(out_file_name)
