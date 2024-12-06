@@ -181,7 +181,7 @@ def save_counts(transition_counts, file_names, save_dir):
         transitions = ["i-i", "i-c", "i-f", "i-n", "c-i", "c-c", "c-f", "c-n", "f-i", "f-c", "f-f", "f-n",
                        "n-i", "n-c", "n-f", "n-n", "x-none"]
     data = [list(e) for e in zip(*counts)]
-    out_file_name = save_dir + "\\transition_counts.txt"
+    out_file_name = os.path.join(save_dir, "transition_counts.txt")
     header = "name\tsize[\u00B5m\u00B2]\t" + "\t".join(transitions)
     dtype = [("col1", "U"+str(max([len(i) for i in file_names]))), ("col2", float)]
     fmt = ["%"+str(max([len(i) for i in file_names]))+"s", "%.4e"]
@@ -201,14 +201,14 @@ def save_trajectory_tables(tables, save_dir):
     Save trajectory table as txt-file.
     """
     data = pd.concat(tables)
-    data.to_csv(save_dir + "\\trajectory_table.txt", sep="\t", index=False)
+    data.to_csv(os.path.join(save_dir, "trajectory_table.txt"), sep="\t", index=False)
 
 
 def save_mask_value(mask_val, save_dir):
     """
     Store mask value as txt-file.
     """
-    file = open(save_dir + "\\mask_val.txt", "w+")
+    file = open(os.path.join(save_dir, "mask_val.txt"), "w+")
     file.write("Mask value: " + mask_val)
 
 
@@ -278,7 +278,7 @@ class Statistic:
         self.significance_test(data, transitions, save_name)
         print("*"*48)
         # saving
-        data_df.to_csv(self.save_dir + "\\" + save_name + ".txt", sep="\t", index=False)
+        data_df.to_csv(os.path.join(self.save_dir, save_name + ".txt"), sep="\t", index=False)
 
     def plot_counts_violinplot(self, data_df,  y_label, colors, ylim, save_name):
         """Display counts as violinplots"""
@@ -287,7 +287,7 @@ class Statistic:
                         edgecolor=(19/255,27/255,30/255), s=12)
         plt.xlabel("transition types"); plt.ylabel(y_label);
         plt.ylim([ylim[0], ylim[1]])
-        plt.savefig(self.save_dir + "\\distributions_violin_qr_" + save_name + ".svg")
+        plt.savefig(os.path.join(self.save_dir, "distributions_violin_qr_" + save_name + ".svg"))
         plt.show()
 
     def plot_counts_matrix(self, data_df, title, save_name, average="mean", cmap="YlGnBu_r", vmin=0, vmax=1):
@@ -304,7 +304,7 @@ class Statistic:
                          vmax=vmax, cmap=cmap)
         ax.xaxis.tick_top()
         plt.title(average + " " + title)
-        plt.savefig(self.save_dir + "\\matrix_" + save_name + ".svg")
+        plt.savefig(os.path.join(self.save_dir, "matrix_" + save_name + ".svg"))
         plt.show()
 
     def segment_lengths_plot(self, xlim=[0,None], ylim=[None, None]):
@@ -326,11 +326,11 @@ class Statistic:
         plt.xlabel("segment length [frame]"); plt.ylabel("normalized counts"); plt.title("Segment lengths per cell")
         plt.xlim([xlim[0],xlim[1]])
         plt.ylim([ylim[0],ylim[1]])
-        plt.savefig(self.save_dir + "\\segment_lengths.svg")
+        plt.savefig(os.path.join(self.save_dir, "segment_lengths.svg"))
         plt.show()
         # saving
         header = [i.iloc[0,0] for i in self.trajectory_tables]
-        pd.DataFrame(seg_lengths).transpose().to_csv(self.save_dir + "\\segment_lengths.txt", sep="\t", header=header, index=False)
+        pd.DataFrame(seg_lengths).transpose().to_csv(os.path.join(self.save_dir, "segment_lengths.txt"), sep="\t", header=header, index=False)
 
     def segments_per_trajectory_plot(self, xlim=[0,None], ylim=[0, None]):
         """Number of segments per trajectory, visualize as histogram"""
@@ -353,11 +353,11 @@ class Statistic:
         plt.xticks(np.arange(0, max_n + 1, 1.0))
         plt.xlim([xlim[0],xlim[1]])
         plt.ylim(([ylim[0],ylim[1]]))
-        plt.savefig(self.save_dir + "\\n_segments_per_track.svg")
+        plt.savefig(os.path.join(self.save_dir, "n_segments_per_track.svg"))
         plt.show()
         # save
         header = [i.iloc[0,0] for i in self.trajectory_tables]
-        pd.DataFrame(n_segs).transpose().to_csv(self.save_dir + "\\n_segments_per_track.txt", sep="\t", header=header, index=False)
+        pd.DataFrame(n_segs).transpose().to_csv(os.path.join(self.save_dir, "n_segments_per_track.txt"), sep="\t", header=header, index=False)
 
     def transitions_wo_none_plot(self, ylim=[0,1]):
         """Average percentage of transitions involving not classified vs without classified segments, visualized as violinplot"""
@@ -372,10 +372,10 @@ class Statistic:
         sns.violinplot(data=pd.DataFrame(data_dct), inner="quartile")
         plt.xlabel(""); plt.ylabel("normalized counts"); plt.title("Transitions without / with none")
         plt.ylim([ylim[0], ylim[1]])
-        plt.savefig(self.save_dir + "\\transitions_wo_none_violin.svg")
+        plt.savefig(os.path.join(self.save_dir , "transitions_wo_none_violin.svg"))
         plt.show()
         # saving
-        pd.DataFrame(data_dct).to_csv(self.save_dir + "\\transitions_wo_none.txt", sep="\t", index=False)
+        pd.DataFrame(data_dct).to_csv(os.path.join(self.save_dir, "transitions_wo_none.txt"), sep="\t", index=False)
 
     def significance_test(self, data, transition_names, save_name):
         data = [list(e) for e in zip(*data)]
@@ -391,7 +391,7 @@ class Statistic:
             result_ks = "norm" if p_ks > 0.05 else "not norm"
             stats_ks.append(stat_ks); ps_ks.append(p_ks); results_ks.append(result_ks)
 
-        out_file_name = self.save_dir + "\\normality_test_" + save_name + ".txt"
+        out_file_name = os.path.join(self.save_dir, "normality_test_" + save_name + ".txt")
         header = "transition type\tShapiro statistic\tShapiro p\tShapiro result\tKolmogorov-Smirnov statistic\t" \
                  "Kolmogorov-Smirnov p\tKolmogorov-Smirnov result\t"
         save_data = np.zeros(np.array(transition_names).size, dtype=[("col1", "U3"), ("col2", float), ("col3", float),
@@ -420,7 +420,7 @@ class Statistic:
                         stats_wilc.append(stat_wilc); ps_wilc.append(p_wilc); results_wilc.append(self.p_to_sig_results(p_wilc))
         unique_transition_names = [str(i[0]) + "-" + str(i[1]) for i in unique_transition_names]
 
-        out_file_name = self.save_dir + "\\significance_test_" + save_name + ".txt"
+        out_file_name = os.path.join(self.save_dir, "significance_test_" + save_name + ".txt")
         header = "targets\tpaired t-test statistic\tpaired t-test p-value\tpaired t-test result\tWilcoxon statistic\t" \
                  "Wilcoxon p-value\tWilcoxon result\t"
         save_data = np.zeros(np.array(unique_transition_names).size, dtype=[("col1", "U7"), ("col2", float),
