@@ -289,7 +289,9 @@ def get_strs(dir, dir_extension, str_ending, ignore_str, add_str):
     return strs, str_names 
 
 def convert_to_fiji_path(path):
-    return path.replace("\\", "\\\\")
+    if os.path.sep == "\\":
+        return path.replace("\\", "\\\\")
+    return path
 
 
 def main(config_path):
@@ -341,11 +343,12 @@ def main(config_path):
             ignore_strs_tl = ["_dl", "_tl"]
             ignore_strs_cells = ["_cell_"]
             
-        tif_files, tif_names = get_files(dir, r"\\cells\\tifs\\", ".tif", ignore_strs_tl)  # tif files with "_dl" will be ignored
-        dl_files, dl_names = get_dls(dir, r"\\cells\\tifs\\", ".tif", ignore_strs_cells)
-        str_files, str_names = get_strs(dir, r"\\cells\\tifs\\", ".tif", ignore_str, add_str) 
-        save_rois = [dir + r"\\cells\\rois\\" + os.path.splitext(i)[0] + ".roi" for i in tif_names]
-        save_areas = [dir + r"\\cells\\rois\\" + os.path.splitext(i)[0] + ".csv" for i in tif_names]
+        dir_extension = os.path.sep + "cells" + os.path.sep + "tifs" + os.path.sep
+        tif_files, tif_names = get_files(dir, dir_extension, ".tif", ignore_strs_tl)  # tif files with "_dl" will be ignored
+        dl_files, dl_names = get_dls(dir, dir_extension, ".tif", ignore_strs_cells)
+        str_files, str_names = get_strs(dir, dir_extension, ".tif", ignore_str, add_str) 
+        save_rois = [os.path.join(dir, "cells", "rois", os.path.splitext(i)[0] + ".roi") for i in tif_names]
+        save_areas = [os.path.join(dir, "cells", "rois", os.path.splitext(i)[0] + ".csv") for i in tif_names]
         all_tifs.extend(tif_files)
         all_tif_names.extend(tif_names)
         all_dls.extend(dl_files)
@@ -358,11 +361,11 @@ def main(config_path):
     final_macro_name = "ROI-macro_" + macro_name + "_" + datetime.today().strftime('%Y-%m-%d_%Hh-%Mm') + ".ijm"
     
     if activate_str:
-        write_macro_str(macro_directory + "\\" + final_macro_name, all_tifs, all_tif_names, all_dls, all_dl_names, all_strs, all_str_names, all_save_rois, all_save_areas, zoom_factor)
+        write_macro_str(os.path.join(macro_directory, final_macro_name), all_tifs, all_tif_names, all_dls, all_dl_names, all_strs, all_str_names, all_save_rois, all_save_areas, zoom_factor)
     else:
-        write_macro(macro_directory + "\\" + final_macro_name, all_tifs, all_tif_names, all_dls, all_dl_names, all_save_rois, all_save_areas, zoom_factor)
+        write_macro(os.path.join(macro_directory, final_macro_name), all_tifs, all_tif_names, all_dls, all_dl_names, all_save_rois, all_save_areas, zoom_factor)
      
-    print("Macro saved successfully at ", macro_directory + "\\" + final_macro_name)
+    print("Macro saved successfully at ", os.path.join(macro_directory, final_macro_name))
 
 
 if __name__ == "__main__":

@@ -884,7 +884,7 @@ def main(config_path):
 
     csNames = []
     for cs in csPaths:
-        csNames.append('_'.join(os.listdir(os.path.join(cs, "cells", "tifs"))[0].split("\\")[-1].split('_')[:-2]))
+        csNames.append('_'.join(os.listdir(os.path.join(cs, "cells", "tifs"))[0].split(os.path.sep)[-1].split('_')[:-2]))
 
     try:
         if len([key for key in config["GLOBAL_DIR"]]):
