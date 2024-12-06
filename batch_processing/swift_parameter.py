@@ -117,12 +117,12 @@ def main(config_path):
 
     for dir in dirs:
         if os.path.exists(
-                dir + "\\swift_analysis_parameter"):  # resets previous calculation of swift_analysis_parameter and recreates foldes
-            shutil.rmtree(dir + "\\swift_analysis_parameter")
-        os.mkdir(dir + "\\swift_analysis_parameter")
-        os.mkdir(dir + "\\swift_analysis_parameter\\parameters")
-        cell_areas = read_areas(dir + "\\cells\\rois")  # writes cell_sizes.log for directories
-        write_log(cell_areas, dir + "\\cells\\rois\\cell_sizes.LOG")
+                os.path.join(dir, "swift_analysis_parameter")):  # resets previous calculation of swift_analysis_parameter and recreates foldes
+            shutil.rmtree(os.path.join(dir, "swift_analysis_parameter"))
+        os.mkdir(os.path.join(dir, "swift_analysis_parameter"))
+        os.mkdir(os.path.join(dir, "swift_analysis_parameter", "parameters"))
+        cell_areas = read_areas(os.path.join(dir, "cells", "rois"))  # writes cell_sizes.log for directories
+        write_log(cell_areas, os.path.join(dir, "cells", "rois", "cell_sizes.LOG"))
         # runs virtual precision notebooks
         precison_nb = precision.precisionNotebook(dir, software, pixel_size, camera_integration_time)
         precison_nb.run_analysis()
@@ -136,13 +136,13 @@ def main(config_path):
         diffLimit_nb.run_analysis()
         diffLimit_nb.save_analysis()
         # changes dir for post calculation data sorting, copies the important files to the parameters subfolder and renames the exp_noise_rate
-        dir = dir + "\\swift_analysis_parameter"
-        shutil.copy(dir + "\\precision\\precisions.txt", dir + "\\parameters")
-        noiseRate = get_matching_files(dir + "\\exp_noise_rate", "exp_noise_rate", "mean")
-        shutil.copy(noiseRate[0], dir + "\\parameters")
-        os.rename(get_matching_files(dir + '\\parameters', "exp_noise_rate", "mean")[0],
-                  dir + "\\parameters\\exp_noise_rate.txt")
-        shutil.copy(dir + "\\diff_limit_nn\\min_nearest_neighbor_distances.csv", dir + "\\parameters")
+        dir = os.path.join(dir, "swift_analysis_parameter")
+        shutil.copy(os.path.join(dir, "precision", "precisions.txt"), os.path.join(dir, "parameters"))
+        noiseRate = get_matching_files(os.path.join(dir, "exp_noise_rate"), "exp_noise_rate", "mean")
+        shutil.copy(noiseRate[0], os.path.join(dir, "parameters"))
+        os.rename(get_matching_files(os.path.join(dir, 'parameters'), "exp_noise_rate", "mean")[0],
+                  os.path.join(dir, "parameters", "exp_noise_rate.txt"))
+        shutil.copy(os.path.join(dir, "diff_limit_nn", "min_nearest_neighbor_distances.csv"), os.path.join(dir, "parameters"))
 
 
 if __name__ == "__main__":
