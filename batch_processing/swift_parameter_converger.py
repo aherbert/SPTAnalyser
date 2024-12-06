@@ -41,7 +41,7 @@ def get_loc_files(dir_path):
     files = []
     for file in os.listdir(dir_path):
         if file.endswith(".csv") and "tracked" not in file:
-            files.append(dir_path + "\\" + file)
+            files.append(os.path.join(dir_path, file))
     return files
 
 
@@ -137,7 +137,7 @@ def write_swift(config_path, exp_displacement, p_bleach):
         if len([key for key in config["INPUT_DIRS"]]):
             for key in config["INPUT_DIRS"]:
 
-                file_paths_dir = get_loc_files(config["INPUT_DIRS"][key] + "\\cells\\tracks")
+                file_paths_dir = get_loc_files(os.path.join(config["INPUT_DIRS"][key], "cells", "tracks"))
                 n_file_paths.append(len(file_paths_dir))
                 file_paths.extend(file_paths_dir)
                 prepath = ''
@@ -148,7 +148,7 @@ def write_swift(config_path, exp_displacement, p_bleach):
                         break
                 if prepath == '':
                     precision_vals.append(
-                        config["INPUT_DIRS"][key] + '\\swift_analysis_parameter\\parameters\\precisions.txt')
+                        os.path.join(config["INPUT_DIRS"][key], 'swift_analysis_parameter', 'parameters', 'precisions.txt'))
                 else:
                     precision_vals.append(prepath)
                 assert (len(n_file_paths) == len(precision_vals),
@@ -159,7 +159,7 @@ def write_swift(config_path, exp_displacement, p_bleach):
                         break
                 if noipath == '':
                     exp_noise_rate_vals.append(
-                        config["INPUT_DIRS"][key] + '\\swift_analysis_parameter\\parameters\\exp_noise_rate.txt')
+                        os.path.join(config["INPUT_DIRS"][key], 'swift_analysis_parameter', 'parameters', 'exp_noise_rate.txt'))
                 else:
                     exp_noise_rate_vals.append(noipath)
                 assert (len(n_file_paths) == len(exp_noise_rate_vals), (
@@ -197,7 +197,7 @@ def write_swift(config_path, exp_displacement, p_bleach):
         raise IncorrectConfigException("Parameter diffraction_limit missing in config.")
 
     try:
-        batch_path = config["SAVE_DIRECTORY"]["save_path"] + '\\swift.bat'
+        batch_path = os.path.join(config["SAVE_DIRECTORY"]["save_path"], 'swift.bat')
     except KeyError:
         raise IncorrectConfigException("No save directory defined in config.")
 
@@ -252,7 +252,7 @@ def converge(save_directory, config_path, software, values, exp_displacement, p_
 
     # Runs the creation of the .bat file and executes it
     write_swift(config_path, exp_displacement, p_bleach)
-    batch_execution = subprocess.Popen(save_directory + '\\swift.bat', shell=True, stdin=subprocess.PIPE, text=True)
+    batch_execution = subprocess.Popen(os.path.join(save_directory, 'swift.bat'), shell=True, stdin=subprocess.PIPE, text=True)
     while batch_execution.returncode is None:
         batch_execution.communicate('\n')  # ensures the powershell doesn't pause during execution
     batch_execution.wait()
@@ -260,7 +260,7 @@ def converge(save_directory, config_path, software, values, exp_displacement, p_
     # Moves the new tracked files into it
     for working_directory in directories:
         for file in get_matching_files(working_directory, '.tracked', '='):
-            shutil.move(file, working_directory + '\\converger')
+            shutil.move(file, os.path.join(working_directory, 'converger'))
 
     # creates the virtual notebooks for each of the tracked files and executes them
     for working_directory in directories:
@@ -372,17 +372,17 @@ def main(config_path):
 
     for coverslip in directories:
         try:
-            shutil.rmtree(coverslip + "\\converger")
+            shutil.rmtree(os.path.join(coverslip, "converger"))
         except FileNotFoundError:
             pass
-        os.mkdir(coverslip + "\\converger")
+        os.mkdir(os.path.join(coverslip, "converger"))
 
     # sets up the value per cell output
 
     values = {'Cell': []}
     for working_directory in directories:
-        for cell in get_matching_files(working_directory + '\\cells\\tracks', 'cell', 'protocol'):
-            name = cell.split('\\')[-1]
+        for cell in get_matching_files(os.path.join(working_directory, 'cells', 'tracks'), 'cell', 'protocol'):
+            name = os.path.basename(cell)
             name = name[:-4]
             values['Cell'].append(name)
     values['Cell'] += ['mean', 'SD', 'SEM']
@@ -392,19 +392,19 @@ def main(config_path):
              camera_integration_time, number_of_points, max_diff, max_it)
 
     # writes output per cell
-    write_statistics(save_directory + '\\value_history.csv', values)
+    write_statistics(os.path.join(save_directory, 'value_history.csv'), values)
 
     # prepares the output per coverslip
 
     values_per_cs = {'Coverslip': ['MEAN', 'SD', 'SEM']}
     for coverslip in directories:
         data_disp, data_bleach = gather_data([coverslip])
-        values_per_cs[coverslip.split('\\')[-1] + ' exp_displacement'] = [numpy.mean(data_disp), numpy.std(data_disp), (
+        values_per_cs[os.path.basename(coverslip) + ' exp_displacement'] = [numpy.mean(data_disp), numpy.std(data_disp), (
                 numpy.std(data_disp) / numpy.sqrt(len(data_disp)))]
-        values_per_cs[coverslip.split('\\')[-1] + ' p_bleach'] = [numpy.mean(data_bleach), numpy.std(data_bleach),
+        values_per_cs[os.path.basename(coverslip) + ' p_bleach'] = [numpy.mean(data_bleach), numpy.std(data_bleach),
                                                                   (numpy.std(data_bleach) / numpy.sqrt(
                                                                       len(data_bleach)))]
-    write_statistics(save_directory + '\\mean_per_cs.csv', values_per_cs)
+    write_statistics(os.path.join(save_directory, 'mean_per_cs.csv'), values_per_cs)
 
     print("The analysis finished and took --- %s seconds ---" % (time.time() - start_time))
 
