@@ -7,6 +7,7 @@ Load analysed *.h5 files from trackAnalysis, filter them, calculate dynamic loca
 globally visualize them, store filtered dataset.
 """
 
+import os
 import numpy as np
 import pandas as pd
 import copy
@@ -1077,20 +1078,20 @@ class TrajectoryStatistics():
     
     def save_diff_fig(self, directory, folder_name):
         for fig, name in zip(self.diff_fig, self.fig_name):  # diffusion hist / bg hist
-            fig.savefig(directory + "\\"+ folder_name +  "\\" + name + ".svg")
+            fig.savefig(os.path.join(directory, folder_name, name + ".svg"))
         # diffusion hist type
-        self.diff_fig_types.savefig(directory + "\\" + folder_name + "\\" + "diffusion_hist_type" + ".svg")
-        self.diff_fig_types_merge.savefig(directory + "\\" + folder_name + "\\" + "diffusion_hist_type_merge" + ".svg")
+        self.diff_fig_types.savefig(os.path.join(directory, folder_name, "diffusion_hist_type" + ".svg"))
+        self.diff_fig_types_merge.savefig(os.path.join(directory, folder_name, "diffusion_hist_type_merge" + ".svg"))
         # MSD type
-        self.MSD_fig_types.savefig(directory + "\\" + folder_name + "\\" + "MSD_type" + ".svg")
-        self.MSD_fig_types_merge.savefig(directory + "\\" + folder_name + "\\" + "MSD_type_merge" + ".svg")
-        self.cell_sizes_fig.savefig(directory + "\\" + folder_name + "\\" + "cell_sizes" + ".svg", bbox_inches="tight")
+        self.MSD_fig_types.savefig(os.path.join(directory, folder_name, "MSD_type" + ".svg"))
+        self.MSD_fig_types_merge.savefig(os.path.join(directory, folder_name, "MSD_type_merge" + ".svg"))
+        self.cell_sizes_fig.savefig(os.path.join(directory, folder_name, "cell_sizes" + ".svg"), bbox_inches="tight")
         target = "segments" if self.cells[0].seg_id else "trajectories"  # SEG OR TRACK
-        self.n_segments_fig.savefig(directory + "\\" + folder_name + "\\" + "number_" + target + ".svg", bbox_inches="tight")
-        self.type_percentages_cell_fig.savefig(directory + "\\" + folder_name + "\\" + "type_percentages_cell" + ".svg", bbox_inches="tight")
-        self.diff_cell_fig.savefig(directory + "\\" + folder_name + "\\" + "diffusion_cell" + ".svg", bbox_inches="tight")
-        self.lengths_cell_fig.savefig(directory + "\\" + folder_name + "\\" + target + "_lengths_cell" + ".svg", bbox_inches="tight")
-        #self.lengths_cell_fig.savefig(directory + "\\" + folder_name + "\\" + target + "_lengths_cell" + ".pdf", format="pdf", transparent=True, bbox_inches="tight")
+        self.n_segments_fig.savefig(os.path.join(directory, folder_name, "number_" + target + ".svg"), bbox_inches="tight")
+        self.type_percentages_cell_fig.savefig(os.path.join(directory, folder_name, "type_percentages_cell" + ".svg"), bbox_inches="tight")
+        self.diff_cell_fig.savefig(os.path.join(directory, folder_name, "diffusion_cell" + ".svg"), bbox_inches="tight")
+        self.lengths_cell_fig.savefig(os.path.join(directory, folder_name, target + "_lengths_cell" + ".svg"), bbox_inches="tight")
+        #self.lengths_cell_fig.savefig(os.path.join(directory, folder_name, target + "_lengths_cell" + ".pdf"), format="pdf", transparent=True, bbox_inches="tight")
 
     def plot_bar_log_bins_bg_corrected(self):
         self.diff_fig.append(plt.figure())
@@ -1142,4 +1143,4 @@ class TrajectoryStatistics():
                     sigma_dyn = math.sqrt((mean_MSD_0+(4/3)*mean_D*dt)/dof)
                 else:
                     sigma_dyn = "negative argument in square root, error not calculable for this target"
-                self.sigma_dyns.append(sigma_dyn)      
+                self.sigma_dyns.append(sigma_dyn)
