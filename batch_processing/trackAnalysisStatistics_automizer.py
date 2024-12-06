@@ -166,17 +166,17 @@ def main(config_path):
     except FileExistsError:
         raise IncorrectConfigException("Saving directory already exists, aborting... Please state a new directory.")
     try:
-        os.mkdir(save_dir + '\\trackAnalysis')
+        os.mkdir(os.path.join(save_dir, 'trackAnalysis'))
         if len(background) != 0:
-            os.mkdir(save_dir + '\\trackAnalysis\\backgrounds')
-        os.mkdir(save_dir + '\\trackAnalysis\\cells')
+            os.mkdir(os.path.join(save_dir + 'trackAnalysis', 'backgrounds'))
+        os.mkdir(os.path.join(save_dir, 'trackAnalysis', 'cells'))
     except FileExistsError:
-        print("directory " + save_dir + '\\trackAnalysis exists and will be overwritten')
-        shutil.rmtree(save_dir + '\\trackAnalysis')
-        os.mkdir(save_dir + '\\trackAnalysis')
+        print("directory " + save_dir + os.path.sep + 'trackAnalysis exists and will be overwritten')
+        shutil.rmtree(os.path.join(save_dir, 'trackAnalysis'))
+        os.mkdir(os.path.join(save_dir, 'trackAnalysis'))
         if len(background) != 0:
-            os.mkdir(save_dir + '\\trackAnalysis\\backgrounds')
-        os.mkdir(save_dir + '\\trackAnalysis\\cells')
+            os.mkdir(os.path.join(save_dir, 'trackAnalysis', 'backgrounds'))
+        os.mkdir(os.path.join(save_dir, 'trackAnalysis', 'cells'))
 
     # runs analysis for each given directory
     for dir in directories:
@@ -203,7 +203,7 @@ def main(config_path):
             notebook_analysis.save_analysis()
         for file in get_matching_files(dir, '.h5', 'background'):
             try:
-                shutil.move(file, save_dir + '\\trackAnalysis\\cells') 
+                shutil.move(file, os.path.join(save_dir, 'trackAnalysis', 'cells')) 
             except shutil.Error:
                 print(
                     'File ' + file + ' already exists in the trackAnalysis directory. Please check for duplicate files. Skipping...')
@@ -224,21 +224,21 @@ def main(config_path):
                 notebook_analysis.save_analysis()
             for file in get_matching_files(bg, '.h5', 'cell'):
                 try:
-                    shutil.move(file, save_dir + '\\trackAnalysis\\backgrounds')
+                    shutil.move(file, os.path.join(save_dir, 'trackAnalysis', 'backgrounds'))
                 except shutil.Error:
                     print(
-                        'File ' + file + ' already exists in the trackAnalysis\\background directory. Please check for duplicate files. Skipping...')
+                        'File ' + file + ' already exists in the trackAnalysis' + os.path.sep + 'background directory. Please check for duplicate files. Skipping...')
                     pass
     print("running statistic filtering")
     if len(background) == 0:
-        notebook_statistics = trackStatistics.statisticsNotebook(save_dir + '\\trackAnalysis\\cells',
+        notebook_statistics = trackStatistics.statisticsNotebook(os.path.join(save_dir, 'trackAnalysis', 'cells'),
                                                                  '', filter_min_traj, filter_max_traj,
                                                                  filter_min_D, max_D, filter_immobile,
                                                                  filter_confined, filter_free, filter_noType)
 
     else:
-        notebook_statistics = trackStatistics.statisticsNotebook(save_dir + '\\trackAnalysis\\cells',
-                                                                 save_dir + '\\trackAnalysis\\backgrounds',
+        notebook_statistics = trackStatistics.statisticsNotebook(os.path.join(save_dir, 'trackAnalysis', 'cells'),
+                                                                 os.path.join(save_dir, 'trackAnalysis', 'backgrounds'),
                                                                  filter_min_traj,
                                                                  filter_max_traj,
                                                                  filter_min_D, max_D, filter_immobile,
