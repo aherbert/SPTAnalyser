@@ -114,11 +114,11 @@ class statisticsNotebook():
                 names)
         else:
             if os.path.exists(
-                    self.widget_load_hdf5.save_dir_box.value + "\\" + self.widget_load_hdf5.save_folder_name_box.value):
+                    os.path.join(self.widget_load_hdf5.save_dir_box.value, self.widget_load_hdf5.save_folder_name_box.value)):
                 print("Directory already exsists. Please choose another directory or folder name.")
             else:
                 os.makedirs(
-                    self.widget_load_hdf5.save_dir_box.value + "\\" + self.widget_load_hdf5.save_folder_name_box.value)
+                    os.path.join(self.widget_load_hdf5.save_dir_box.value, self.widget_load_hdf5.save_folder_name_box.value))
                 if self.widget_load_hdf5.save_dir_box.value:
                     init_save_track_stats(h5_stats, self.track_stats, self.widget_load_hdf5.save_dir_box.value,
                                           self.widget_load_hdf5.save_folder_name_box.value,

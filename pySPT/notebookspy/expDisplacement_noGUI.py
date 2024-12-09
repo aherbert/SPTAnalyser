@@ -44,7 +44,6 @@ class displacementNotebook():
         self.widget_exp_disp.create_clear_output()
         self.widget_dir_structure.name_handling(self.widget_exp_disp.file_text_box.value)
         self.widget_dir_structure.create_raw_base_name()
-        self.widget_dir_structure.sub_folder = "\\preAnalysis"
+        self.widget_dir_structure.sub_folder = os.path.sep + "preAnalysis"
         self.widget_dir_structure.create_folder()
         self.exp_displacement.save_exp_displacement(self.widget_dir_structure.sub_folder_dir, self.widget_dir_structure.raw_base_name, False)
-

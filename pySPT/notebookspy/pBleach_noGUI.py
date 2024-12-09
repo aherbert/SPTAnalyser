@@ -53,8 +53,7 @@ class bleachNotebook():
         self.widget_p_bleach.create_clear_output()
         self.widget_dir_structure.name_handling(self.widget_p_bleach.file_text_box.value)
         self.widget_dir_structure.create_raw_base_name()
-        self.widget_dir_structure.sub_folder = "\\preAnalysis"
+        self.widget_dir_structure.sub_folder = os.path.sep + "preAnalysis"
         self.widget_dir_structure.create_folder()
         self.p_bleach.save_fit_results(self.widget_dir_structure.sub_folder_dir, self.widget_dir_structure.raw_base_name)
         self.p_bleach.save_mjd_n_frequencies(self.widget_dir_structure.sub_folder_dir, self.widget_dir_structure.raw_base_name)
-
