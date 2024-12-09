@@ -6,13 +6,14 @@ Institute for Physical and Theoretical Chemistry, Goethe University Frankfurt a.
 Save statistics & plot information as *.h5 in hmmVisualization.ipynb.
 """
 
+import os
 import h5py
 import numpy as np
 
 
 class SaveHmmVis():
     def __init__(self, directory, folder_name):
-        self.save_path = directory + "\\" + folder_name + "\\hmm_vis.h5"
+        self.save_path = os.path.join(directory, folder_name, "hmm_vis.h5")
         self.h5_file = self.create_h5_file()
         
     def create_h5_file(self):

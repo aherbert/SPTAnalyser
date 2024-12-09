@@ -20,6 +20,7 @@ from ..Analysis import trajectory
 from ..Analysis import trackAnalysis
 from ..hmm import mergeHdf5
 from ..hmm import microscope
+import os
 import time
 import numpy as np 
 from ipywidgets import HBox, VBox
@@ -152,11 +153,11 @@ def init_save_track_analysis(cover_slip, cell_index, track_analysis, widget_trac
     JNB: track Analysis, saving.
     :param: Objects created in JNB.
     """   
-    # hdf5 file representing the cell is saved in \\analysis subfolder    
+    # hdf5 file representing the cell is saved in analysis subfolder    
     widget_dir_structure = widgetDirectoryStructure.WidgetDirStructure()
     widget_dir_structure.name_handling(cover_slip.cell_files[cell_index])
     widget_dir_structure.create_raw_base_name()
-    widget_dir_structure.sub_folder = "\\analysis"
+    widget_dir_structure.sub_folder = "analysis"
     widget_dir_structure.create_folder()
     h5 = hdf5.Hdf5(widget_dir_structure.sub_folder_dir, widget_dir_structure.raw_base_name)
     h5.create_h5()
@@ -199,15 +200,15 @@ def init_save_track_analysis(cover_slip, cell_index, track_analysis, widget_trac
     h5.data_rossier_info(track_analysis.number_of_trajectories, rossier_info[:,0],  rossier_info[:,1],  rossier_info[:,2],
                          rossier_info[:,3],  rossier_info[:,4],  rossier_info[:,5],  rossier_info[:,6],  rossier_info[:,7],
                          rossier_info[:,8],  rossier_info[:,9], rossier_info[:,10], rossier_info[:,11])
-    # a microscopy & trc file are saved in \\hmm subfolder
+    # a microscopy & trc file are saved in hmm subfolder
     if widget_track_analysis.microscope_check_box.value:
-        widget_dir_structure.sub_folder = "\\hmm"
+        widget_dir_structure.sub_folder = "hmm"
         widget_dir_structure.create_folder()
         microscope_file = microscope.Microscope(cell.dt, cell.pixel_size, cell.sigma_dyn_hmm,
                                                 widget_dir_structure.sub_folder_dir)
         microscope_file.save_hmm_microscope()
     if widget_track_analysis.hmm_check_box.value:
-        widget_dir_structure.sub_folder = "\\hmm"
+        widget_dir_structure.sub_folder = "hmm"
         widget_dir_structure.create_folder()
         save_trc_hmm = saveTrcHmm.SaveTrcHmm(cell.filtered_trc_file_hmm, cell.pixel_size, widget_dir_structure.sub_folder_dir,
                                              widget_dir_structure.raw_base_name, widget_track_analysis.hmm_trc_float_precision_box.value)
@@ -221,7 +222,7 @@ def init_save_filtered_analysis(cover_slip, cell_index, track_stats, directory, 
     h5_filtered = saveFiltered.SaveFiltered()
     track_analysis = trackAnalysis.TrackAnalysis()
     cell_name = track_stats.cells[cell_index].name
-    h5_filtered.create_h5(directory + "\\" + folder_name + "\\" + cell_name)
+    h5_filtered.create_h5(os.path.join(directory, folder_name, cell_name))
     cell = track_stats.cells[cell_index]
     one_trajectory = track_stats.cell_trajectories_filtered[cell_index][0]  # get trajectory attributes, that are the same for every trajectory
     if isinstance(track_stats.sigma_dyns[cell_index], str):
@@ -286,7 +287,7 @@ def init_save_track_stats(h5_stats, track_stats, directory, folder_name, name):
     :param path: head path for statistics h5 file.
     :param name: raw base name for statistics h5 file.
     """
-    h5_stats.create_h5(directory + "\\" + folder_name + "\\" + name)
+    h5_stats.create_h5(os.path.join(directory, folder_name, name))
     # if background files were loaded    
     if track_stats.background_trajectories:
         h5_stats.groups_bg()

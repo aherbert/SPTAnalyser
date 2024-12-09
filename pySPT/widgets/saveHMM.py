@@ -56,13 +56,13 @@ class SaveInitHMM():
 
             df.loc[len(df)] = row
 
-            save_name = self.save_path + "\\initial_params_" + str(n_states) + "states.csv"
+            save_name = os.path.join(self.save_path, "initial_params_" + str(n_states) + "states.csv")
             df.to_csv(save_name, index=False)
 
     def save_information_criteria(self):
-        save_name = self.save_path + "\\information_criteria.csv"
+        save_name = os.path.join(self.save_path, "information_criteria.csv")
         self.init_hmm.model_dfs.to_csv(save_name, index=False)
-        self.init_hmm.information_criteria_plot.savefig(self.save_path + "\\information_criteria." + self.figure_format,
+        self.init_hmm.information_criteria_plot.savefig(os.path.join(self.save_path, "information_criteria." + self.figure_format),
                                                         format=self.figure_format, transparent=True, bbox_inches="tight")
 
     def save_jdd_fits(self):
@@ -90,12 +90,12 @@ class SaveInitHMM():
                 plt.xlabel("jump distance [nm]")
                 plt.ylabel("density")
 
-                subfolder = self.input_path + "\\SPTAnalyser_" + os.path.splitext(os.path.splitext(self.init_hmm.names[target_idx])[0])[0]
+                subfolder = os.path.join(self.input_path, "SPTAnalyser_" + os.path.splitext(os.path.splitext(self.init_hmm.names[target_idx])[0])[0])
                 if not os.path.isdir(subfolder):
                     os.mkdir(subfolder)
-                if not os.path.isdir(subfolder + "\\hmm"):
-                    os.mkdir(subfolder + "\\hmm")
-                fig.savefig(subfolder + "\\hmm" + "\\jdd_fit_" + str(n_states) + "." + self.figure_format,
+                if not os.path.isdir(os.path.join(subfolder, "hmm")):
+                    os.mkdir(os.path.join(subfolder, "hmm"))
+                fig.savefig(os.path.join(subfolder, "hmm", "jdd_fit_" + str(n_states) + "." + self.figure_format),
                             format=self.figure_format, transparent=True, bbox_inches="tight")
                 plt.close(fig)
 
@@ -141,12 +141,12 @@ class SaveHMM():
             plt.xlabel("jump distance [nm]")
             plt.ylabel("density")
 
-            subfolder = self.input_path + "\\SPTAnalyser_" + os.path.splitext(os.path.splitext(self.hmm.names[target_idx])[0])[0]
+            subfolder = os.path.join(self.input_path, "SPTAnalyser_" + os.path.splitext(os.path.splitext(self.hmm.names[target_idx])[0])[0])
             if not os.path.isdir(subfolder):
                 os.mkdir(subfolder)
-            if not os.path.isdir(subfolder + "\\hmm"):
-                os.mkdir(subfolder + "\\hmm")
-            fig.savefig(subfolder + "\\hmm" + "\\jdd_fit_hmm_diff." + self.figure_format,
+            if not os.path.isdir(os.path.join(subfolder, "hmm")):
+                os.mkdir(os.path.join(subfolder, "hmm"))
+            fig.savefig(os.path.join(subfolder, "hmm", "jdd_fit_hmm_diff." + self.figure_format),
                         format=self.figure_format, transparent=True, bbox_inches="tight")
             plt.close(fig)
 
@@ -154,7 +154,7 @@ class SaveHMM():
         figure_names = ["diffusion_coefficients", "transition_probabilities", "state_probabilities", "weights",
                         "diffusion_coefficients_corr"]
         for figure, name in zip(self.hmm.figures, figure_names):
-            figure.savefig(self.save_path + "\\" + name + "." + self.figure_format,
+            figure.savefig(os.path.join(self.save_path, name + "." + self.figure_format),
                            format=self.figure_format, transparent=True, bbox_inches="tight")
 
     def save_state_transition_diagram(self, choose_weights):
@@ -203,22 +203,22 @@ class SaveHMM():
                                                    25) if colored_edges else "black"),
                      fontsize=edge_fontsize, style="filled",
                      penwidth=(str(self.hmm.tp_px_mapping(tp, row, column)) if var_width else "1"))
-        dot.render(self.save_path + r"\\state_transition_diagram." + self.figure_format, view=False)
+        dot.render(os.path.join(self.save_path, "state_transition_diagram." + self.figure_format), view=False)
 
     def save_scores(self):
         x = pd.concat(self.hmm.model_scores)
         x.insert(0, "name", self.hmm.names)
-        x.to_csv(self.save_path + "\\model_scores.csv", index=False)
+        x.to_csv(os.path.join(self.save_path, "model_scores.csv"), index=False)
 
     def save_viterbi(self):
         for target_idx, sequence in enumerate(self.hmm.state_sequences):
-            subfolder = self.input_path + "\\SPTAnalyser_" + \
-                        os.path.splitext(os.path.splitext(self.hmm.names[target_idx])[0])[0]
+            subfolder = os.path.join(self.input_path, "SPTAnalyser_" + \
+                os.path.splitext(os.path.splitext(self.hmm.names[target_idx])[0])[0])
             if not os.path.isdir(subfolder):
                 os.mkdir(subfolder)
-            if not os.path.isdir(subfolder + "\\hmm"):
-                os.mkdir(subfolder + "\\hmm")
-            sequence.to_csv(subfolder + "\\hmm" + "\\state_sequence.csv", index=False)
+            if not os.path.isdir(os.path.join(subfolder, "hmm")):
+                os.mkdir(os.path.join(subfolder, "hmm"))
+            sequence.to_csv(os.path.join(subfolder, "hmm", "state_sequence.csv"), index=False)
 
     def save_hmm_params(self):
         Ds = [[] for _ in range(len(self.hmm.model_Ds))]
@@ -288,7 +288,7 @@ class SaveHMM():
         if self.hmm.model_Ds_corr:
             row.extend([i[0] / 1000000 for i in self.hmm.mean_model_Ds_corr])
         df.loc[len(df)] = row
-        save_name = self.save_path + "\\hmm_params.csv"
+        save_name = os.path.join(self.save_path, "hmm_params.csv")
         df.to_csv(save_name, index=False)
 
     def save(self, choose_weights):

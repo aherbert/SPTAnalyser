@@ -6,6 +6,7 @@ Institute for Physical and Theoretical Chemistry, Goethe University Frankfurt a.
 Create a *.h5 file in trackAnalysis JNB, per cell.
 """
 
+import os
 import numpy as np
 import h5py
 
@@ -18,7 +19,7 @@ class Hdf5():
         self.grp02 = []
         self.grp03 = []
         self.grp04 = []
-        self.trc_file_hdf5 = path + "\\" + raw_base_name + ".h5"  # path of file with .h5 ending
+        self.trc_file_hdf5 = os.path.join(path, raw_base_name + ".h5")  # path of file with .h5 ending
         
     def create_h5(self):
         self.create_h5_file()
@@ -223,4 +224,4 @@ class Hdf5():
         dset = self.grp01.create_dataset("Trajectory{}".format(trajectory_number), (np.shape(dt)[0],),
                                          dtype=np.dtype([("dt [s]", float), ("MSD [\u03BCm\u00b2]", float)]))
         dset["dt [s]"] = dt
-        dset["MSD [\u03BCm\u00b2]"] = MSD    
+        dset["MSD [\u03BCm\u00b2]"] = MSD

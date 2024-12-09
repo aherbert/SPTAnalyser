@@ -7,6 +7,7 @@ In the trackAnalysis JNB a trc file for the hmm analysis with no tracks D < 0 an
 (-> SPTAnalyser/hmm/*.trc).
 """
 
+import os
 import datetime
 import numpy as np 
 
@@ -54,7 +55,7 @@ class SaveTrcHmm():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = self.save_dir + "\\" + year + month + day + "_" + self.raw_base_name + "_trc_hmm.trc"
+        out_file_name = self.save_dir + os.path.sep + year + month + day + "_" + self.raw_base_name + "_trc_hmm.trc"
         header = "track_id\tframe\tx [pixel]\ty [pixel]\tplaceholder\tintensity [photon]\t"
         np.savetxt(out_file_name, 
                    X=self.trc_file,

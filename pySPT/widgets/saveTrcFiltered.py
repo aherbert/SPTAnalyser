@@ -6,6 +6,7 @@ Institute for Physical and Theoretical Chemistry, Goethe University Frankfurt a.
 After filtering in the JNB trackStatistics, a filtered .trc file is saved for each cell.
 """
 
+import os
 import datetime
 import numpy as np
 
@@ -61,7 +62,7 @@ class SaveTrcFiltered():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = self.directory + "\\" + self.folder + "\\" + year + month + day + "_" + self.base_name + "_trc_filtered_hmm.trc"
+        out_file_name = os.path.join(self.directory, self.folder, str(year) + month + day + "_" + self.base_name + "_trc_filtered_hmm.trc")
         header = "track_id\t frame\t x [pixel]\t y [pixel]\t placeholder\t intensity [photon]\t"
         trc_hmm = list(map(lambda row: list(row)[:6], self.trc_filtered))  # get rid of seg id
         np.savetxt(out_file_name, 

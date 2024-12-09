@@ -33,7 +33,7 @@ class DataLoader():
             for file in os.listdir(dir):
                 if file.endswith(".h5") and "statistics" not in file:
                     file_names.append(file)
-                    files.append(h5py.File(dir + "\\" + file, "r"))
+                    files.append(h5py.File(os.path.join(dir, file), "r"))
             all_file_names.extend(file_names)
             all_files.extend(files)
         return all_file_names, all_files
@@ -51,7 +51,7 @@ class DataLoader():
             file_names = []
             for file in os.listdir(dir):
                 if file.endswith("csv") and "tracked" in file:
-                    files.append(pd.read_csv(dir + "\\" + file))
+                    files.append(pd.read_csv(os.path.join(dir, file)))
                     file_names.append(file)
             all_file_names.extend(file_names)
             all_files.extend(files)
