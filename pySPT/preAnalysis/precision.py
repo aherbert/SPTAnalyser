@@ -239,10 +239,10 @@ class Precision():
         if len(day) == 1:
             day = str(0) + day
         if self.software == "ThunderSTORM":
-            out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty" + "_histogram.txt"
+            out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty" + "_histogram.txt"
             header = "Localization uncertainty [nm]\tfraction\t"
         elif self.software == "rapidSTORM":
-            out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty" + "_x_histogram.txt"
+            out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty" + "_x_histogram.txt"
             header = "Localization uncertainty x [nm]\tfraction\t"
         np.savetxt(out_file_name, X=self.position_uncertainties_hist_x, fmt=("%.1f", "%.4e"), header=header)
 
@@ -261,7 +261,7 @@ class Precision():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty" + "_y_histogram.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty" + "_y_histogram.txt"
         header = "Localization uncertainty y [nm]\tfraction\t"
         np.savetxt(out_file_name, X=self.position_uncertainties_hist_y, fmt=("%.1f", "%.4e"), header=header)
         
@@ -281,10 +281,10 @@ class Precision():
         if len(day) == 1:
             day = str(0) + day
         if self.software == "ThunderSTORM":
-            out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty" + "_ln_histogram.txt"
+            out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty" + "_ln_histogram.txt"
             header = "ln(localization uncertainty)\tfraction\tgauss fit\tresidues\t"
         elif self.software == "rapidSTORM":
-            out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty" + "_ln_x_histogram.txt"
+            out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty" + "_ln_x_histogram.txt"
             header = "ln(localization uncertainty) x\tfraction\tgauss fit\tresidues\t"
         np.savetxt(out_file_name, X=self.position_uncertainties_hist_log_x, fmt=("%.2f", "%.4e", "%.4e", "%.4e"),
                    header=header)
@@ -304,7 +304,7 @@ class Precision():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty" + "_ln_y_histogram.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty" + "_ln_y_histogram.txt"
         header = "ln(localization uncertainty) y\tfraction\tgauss fit\tresidues\t "
         np.savetxt(out_file_name, X=self.position_uncertainties_hist_log_y, fmt=("%.2f", "%.4e", "%.4e", "%.4e"),
                    header=header)
@@ -322,7 +322,7 @@ class Precision():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_localization_uncertainty.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_localization_uncertainty.txt"
         file = open(out_file_name, 'w')
         if not file.closed:
             if self.software == "ThunderSTORM":
@@ -358,7 +358,7 @@ class Precision():
         if len(day) == 1:
             day = str(0) + day
         for figure, name in zip(self.figures, self.figure_names):
-            figure.savefig(directory + "\\" + year + month + day + "_" + base_name + "_" + name + ".pdf", format="pdf", transparent=True)
+            figure.savefig(directory + os.path.sep + year + month + day + "_" + base_name + "_" + name + ".pdf", format="pdf", transparent=True)
 
     # precision per folder
 
@@ -369,7 +369,7 @@ class Precision():
         files, file_names = [], []
         for file in os.listdir(target_dir):
             if file.endswith("csv") and "tracked" not in file:
-                files.append(target_dir + "\\" + file)
+                files.append(target_dir + os.path.sep + file)
                 file_names.append(file)
         files = [pd.read_csv(i) for i in files]
         return files, file_names
@@ -414,10 +414,10 @@ class Precision():
             day = str(0) + day
         # save precision figure
         if save_fig:
-            self.figure_box.savefig(path + "\\" + year + month + day + "_precision.pdf",
+            self.figure_box.savefig(path + os.path.sep + year + month + day + "_precision.pdf",
                            format="pdf", transparent=True, bbox_inches= "tight")
         # save cell info & precision values as column
-        out_file_name = path + "\\precisions.txt"
+        out_file_name = os.path.join(path, "precisions.txt")
         header = "cell name\tprecision [nm]\t"
         cell_names = [os.path.splitext(i)[0] for i in cell_names]
         max_name_length = max([len(i) for i in cell_names])

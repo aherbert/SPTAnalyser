@@ -179,7 +179,7 @@ class DiffLimit():
             localization_header = "# <localizations insequence="
             for i in os.listdir(file_path):
                 if i.endswith(file_ending) and "tracked" not in i:
-                    file_path = dir + "\\" + i
+                    file_path = os.path.join(dir, i)
                     pd_file = pd.read_csv(file_path, sep=r"\t")
                     if localization_header in str(pd_file.columns):
                         file_names.append(i)
@@ -188,7 +188,7 @@ class DiffLimit():
         elif file_ending == ".csv":
             for i in os.listdir(file_path):
                 if i.endswith(file_ending) and "tracked" not in i:
-                    file_path = dir + "\\" + i
+                    file_path = os.path.join(dir, i)
                     pd_file = pd.read_csv(file_path)
                     if list(pd_file.columns) == ['id', 'frame', 'x [nm]', 'y [nm]', 'sigma [nm]', 'intensity [photon]',
                                                  'offset [photon]', 'bkgstd [photon]', 'uncertainty_xy [nm]']:
@@ -255,15 +255,15 @@ class DiffLimit():
             self.plot_min_nn_distances()
 
     def save(self, dir_path, folder_name, file_header, save_plot):
-        os.mkdir(dir_path + "\\" + folder_name)
+        os.mkdir(os.path.join(dir_path, folder_name))
         nn_distances_pd = pd.DataFrame(self.nn_distances)
         nn_distances_pd = nn_distances_pd.transpose()
         nn_distances_pd.columns = file_header
-        nn_distances_pd.to_csv(dir_path + "\\" + folder_name + "\\nearest_neighbor_distances.csv", index=False)
+        nn_distances_pd.to_csv(os.path.join(dir_path, folder_name, "nearest_neighbor_distances.csv"), index=False)
         min_nn_distances_pd = pd.DataFrame(self.min_nn_distances)
         min_nn_distances_pd = min_nn_distances_pd.transpose()
         min_nn_distances_pd.columns = file_header
-        min_nn_distances_pd.to_csv(dir_path + "\\" + folder_name + "\\min_nearest_neighbor_distances.csv", index=False)
+        min_nn_distances_pd.to_csv(os.path.join(dir_path, folder_name, "min_nearest_neighbor_distances.csv"), index=False)
         if save_plot:
-            self.figure.savefig(dir_path + "\\" + folder_name + "\\min_nearest_neighbor_boxplot.pdf",
+            self.figure.savefig(os.path.join(dir_path, folder_name, "min_nearest_neighbor_boxplot.pdf"),
                 format="pdf", transparent=True, bbox_inches="tight")

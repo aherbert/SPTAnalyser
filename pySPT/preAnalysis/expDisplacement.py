@@ -8,6 +8,7 @@ Fraction vs mjd [nm] weighted by mjd_n -> determine the average as initial exp_d
 Based on segments.
 """
 
+import os
 import datetime
 import numpy as np
 import matplotlib.pyplot as plt
@@ -91,7 +92,7 @@ class ExpDisplacement():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_exp_displacement" + "_histogram.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_exp_displacement" + "_histogram.txt")
         header = "mjd [nm]\tfraction\t"
         np.savetxt(out_file_name, X=self.mjd_histogram, fmt=("%i", "%.4e"), header=header)
         
@@ -108,7 +109,7 @@ class ExpDisplacement():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_exp_displacement.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_exp_displacement.txt"
         file = open(out_file_name, 'w+')
         file.write("exp_displacement [nm]\tmax_mjd [nm]\n")
         file.write("%.3f\t%.3f\n" %(self.average_mjd, self.max_mjd))
@@ -137,5 +138,5 @@ class ExpDisplacement():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        self.fig.savefig(directory + "\\" + year + month + day + "_" + base_name + "_exp_displacement_histogram.pdf",
+        self.fig.savefig(directory + os.path.sep + year + month + day + "_" + base_name + "_exp_displacement_histogram.pdf",
                          format="pdf", transparent=True)

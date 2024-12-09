@@ -7,6 +7,7 @@ P_bleach is the probability per particle and frame to bleach [0..1]. Calc k with
 With k, calc cumulative distribution function 1-exp(-dt*k) = probability of event in the interval [0..1], 1 = 1 frame.
 """
 
+import os
 import numpy as np
 import datetime
 import matplotlib.pyplot as plt
@@ -164,7 +165,7 @@ class PBleach():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_p_bleach" + "_histogram.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_p_bleach" + "_histogram.txt"
         header = "frames [count]\ttime [s]\tfraction\texponential fit\tresidues\t"
         np.savetxt(out_file_name, X=self.mjd_n_histogram, fmt=("%i", "%.4e", "%.4e", "%.4e", "%.4e"), header=header)
         print("Results are saved at", directory)
@@ -182,7 +183,7 @@ class PBleach():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + "\\" + year + month + day + "_" + base_name + "_p_bleach.txt"
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_p_bleach.txt"
         file = open(out_file_name, 'w+')
         if not file.closed:
             file.write("# p_bleach\tk [1/s]\tvariance of k [1/s\u00b2]\tnumber of points masked\n")
@@ -201,5 +202,5 @@ class PBleach():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        self.figure.savefig(directory + "\\" + year + month + day + "_" + base_name + "_p_bleach_histogram.pdf",
+        self.figure.savefig(directory + os.path.sep + year + month + day + "_" + base_name + "_p_bleach_histogram.pdf",
                             format="pdf", transparent=True)
