@@ -92,7 +92,7 @@ class ExpDisplacement():
             month = str(0) + month
         if len(day) == 1:
             day = str(0) + day
-        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_exp_displacement" + "_histogram.txt")
+        out_file_name = directory + os.path.sep + year + month + day + "_" + base_name + "_exp_displacement" + "_histogram.txt"
         header = "mjd [nm]\tfraction\t"
         np.savetxt(out_file_name, X=self.mjd_histogram, fmt=("%i", "%.4e"), header=header)
         
